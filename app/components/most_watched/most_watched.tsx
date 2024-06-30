@@ -1,6 +1,7 @@
 "use client";
 
 import { discoverMovies, getGenres } from "@/app/services/tmdb_api";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState, useCallback } from "react";
 import { useInView } from "react-intersection-observer";
@@ -155,12 +156,15 @@ const MostWatched: React.FC = () => {
           </select>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 flex-1">
-          {movies.map((movie) => (
+          {movies.map((movie, index) => (
             <div
+              key={`${movie.id}-${index}`}
               className="bg-gray-800 rounded-lg overflow-hidden cursor-pointer"
               onClick={() => handleSelectMovie(movie)}>
               <div className="w-full h-60 flex items-center justify-center overflow-hidden rounded-lg">
-                <img
+                <Image
+                  width={500}
+                  height={750}
                   src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                   alt={movie.title}
                   className="w-full h-auto object-contain"

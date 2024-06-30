@@ -8,6 +8,7 @@ import {
   getTopMoviesForProvider,
   getWatchProviders,
 } from "@/app/services/tmdb_api";
+import Image from "next/image";
 
 const TopMovies: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -96,7 +97,9 @@ const TopMovies: React.FC = () => {
                   key={movie.id}
                   className="relative">
                   <div className="w-full h-72 flex items-center justify-center overflow-hidden rounded-lg">
-                    <img
+                    <Image
+                      width={500}
+                      height={750}
                       src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                       alt={movie.title}
                       className="w-full h-auto object-cover"

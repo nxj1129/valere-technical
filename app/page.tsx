@@ -9,6 +9,7 @@ import FavoriteButton from "./components/favorite_button/favorite_button";
 import { FavoritesProvider } from "@/app/services/favorites_context";
 import { usePathname, useRouter } from "next/navigation";
 import { getNowPlaying } from "./services/tmdb_api";
+import Image from "next/image";
 
 export default function Home() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -40,7 +41,9 @@ export default function Home() {
             items={movies}
             renderItem={(movie) => (
               <div className="relative">
-                <img
+                <Image
+                  width={500}
+                  height={750}
                   src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
                   alt={movie.title}
                   className="w-full h-72 object-cover rounded-lg"

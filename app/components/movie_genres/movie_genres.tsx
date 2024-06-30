@@ -6,6 +6,7 @@ import MovieCarousel from "../movie_carousel/movie_carousel";
 import FavoriteButton from "../favorite_button/favorite_button";
 import { useRouter } from "next/navigation";
 import { getGenres, getMoviesByGenre } from "@/app/services/tmdb_api";
+import Image from "next/image";
 
 const MovieGenres: React.FC = () => {
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -90,7 +91,9 @@ const MovieGenres: React.FC = () => {
             items={movies}
             renderItem={(movie) => (
               <div className="relative">
-                <img
+                <Image
+                  width={500}
+                  height={750}
                   src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
                   alt={movie.title}
                   className="w-full h-72 object-cover rounded-lg"

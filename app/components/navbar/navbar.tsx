@@ -14,6 +14,7 @@ import { usePathname, useRouter } from "next/navigation";
 import SearchResults from "../search_results/search_results";
 import { useFavorites } from "@/app/services/favorites_context";
 import { searchMovies } from "@/app/services/tmdb_api";
+import Image from "next/image";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -78,7 +79,7 @@ const Navbar: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="text-white flex flex-row items-center cursor-pointer">
             <p
-              className="mx-3 text-2xl"
+              className="mx-3 text-2xl hover:text-red-500"
               onClick={() => handleNavigation("/")}>
               Valereflix
             </p>
@@ -144,20 +145,29 @@ const Navbar: React.FC = () => {
             </button>
             {isOpen && (
               <div className="absolute left-0 md:left-auto right-0 mt-2 w-full md:w-56 bg-gray-700 rounded-md py-1 z-50 max-h-60 overflow-y-auto scrollbar-hide hide-scrollbar cursor-pointer">
-                {favorites?.map((favorite) => (
-                  <div
-                    className="flex items-center p-1 hover:bg-gray-600"
-                    onClick={() => handleSelectMovie(favorite)}>
-                    <img
-                      src={`https://image.tmdb.org/t/p/w200${favorite.poster_path}`}
-                      alt={favorite.title}
-                      className="w-14 h-20 object-cover rounded md flex-shrink-0"
-                    />
-                    <p className="ml-2 text-white text-xs flex-grow">
-                      {favorite.title}{" "}
-                    </p>
-                  </div>
-                ))}
+                {favorites.length > 0 ? (
+                  favorites.map((favorite) => (
+                    <div
+                      key={favorite.id}
+                      className="flex items-center p-1 hover:bg-gray-600"
+                      onClick={() => handleSelectMovie(favorite)}>
+                      <Image
+                        width={500}
+                        height={750}
+                        src={`https://image.tmdb.org/t/p/w200${favorite.poster_path}`}
+                        alt={favorite.title}
+                        className="w-14 h-20 object-cover rounded md flex-shrink-0"
+                      />
+                      <p className="ml-2 text-white text-xs flex-grow">
+                        {favorite.title}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-white text-center py-2">
+                    No favorites added yet
+                  </p>
+                )}
               </div>
             )}
           </div>

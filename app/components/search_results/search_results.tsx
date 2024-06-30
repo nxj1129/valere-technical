@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface SearchResultsProps {
   results: Movie[];
@@ -60,7 +61,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             index === selectedIndex ? "bg-gray-700" : "hover:bg-gray-700"
           }`}
           onClick={() => onSelect(movie)}>
-          <img
+          <Image
+            width={500}
+            height={750}
             src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`}
             alt={movie.title}
             className="w-12 h-18 object-cover rounded mr-2"

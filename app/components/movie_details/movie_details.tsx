@@ -5,6 +5,7 @@ import FavoriteButton from "../favorite_button/favorite_button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getCastMembers, getMovieDetails } from "@/app/services/tmdb_api";
+import Image from "next/image";
 
 const MovieDetails: React.FC<any> = ({ params }) => {
   const [movie, setMovie] = useState<any>(null);
@@ -67,14 +68,20 @@ const MovieDetails: React.FC<any> = ({ params }) => {
           <ArrowLeft size={18} /> Back
         </p>
       </button>
-      <img
+      <Image
+        width={900}
+        height={1000}
+        alt="banner"
         className="w-full rounded-lg opacity-70"
         src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
       />
 
       <div className="flex flex-col md:flex-row pt-5">
         <div className="md:w-1/5">
-          <img
+          <Image
+            width={500}
+            height={750}
+            alt="poster"
             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
             className="w-full rounded-lg"
           />
