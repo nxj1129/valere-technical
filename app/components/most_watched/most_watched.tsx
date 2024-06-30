@@ -1,5 +1,6 @@
 "use client";
 
+import { discoverMovies, getGenres } from "@/app/services/tmdb_api";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState, useCallback } from "react";
 import { useInView } from "react-intersection-observer";
@@ -18,30 +19,22 @@ const MostWatched: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const apiKey = process.env.TMDB_API_KEY;
-
   const { ref, inView } = useInView({
     threshold: 0,
   });
 
-  const fetchMovies = useCallback(
+  const fetchMoviesData = useCallback(
     async (pageNumber: number) => {
       if (isLoading || !hasMore) return;
 
       setIsLoading(true);
       try {
-        let url = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&page=${pageNumber}`;
-        if (selectedYear) url += `&primary_release_year=${selectedYear}`;
-        if (selectedGenre) url += `&with_genres=${selectedGenre}`;
-        if (selectedRating) url += `&vote_average.gte=${selectedRating}`;
-
-        const response = await fetch(url);
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch movies");
-        }
-
-        const data = await response.json();
+        const data = await discoverMovies({
+          page: pageNumber,
+          year: selectedYear,
+          genre: selectedGenre,
+          rating: selectedRating,
+        });
 
         if (!data.results || data.results.length === 0) {
           setHasMore(false);
@@ -59,16 +52,13 @@ const MostWatched: React.FC = () => {
         setIsLoading(false);
       }
     },
-    [selectedYear, selectedGenre, selectedRating, apiKey]
+    [selectedYear, selectedGenre, selectedRating]
   );
 
   const fetchGenres = useCallback(async () => {
     try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`
-      );
-      const data = await response.json();
-      setGenres(data.genres);
+      const genresData = await getGenres();
+      setGenres(genresData);
     } catch (error) {
       console.error("Error fetching genres:", error);
     }
@@ -78,14 +68,14 @@ const MostWatched: React.FC = () => {
     setMovies([]);
     setPage(1);
     setHasMore(true);
-    fetchMovies(1);
-  }, [selectedYear, selectedGenre, selectedRating, fetchMovies]);
+    fetchMoviesData(1);
+  }, [selectedYear, selectedGenre, selectedRating, fetchMoviesData]);
 
   useEffect(() => {
     if (inView && !isLoading) {
-      fetchMovies(page);
+      fetchMoviesData(page);
     }
-  }, [inView, isLoading, fetchMovies, page]);
+  }, [inView, isLoading, fetchMoviesData, page]);
 
   useEffect(() => {
     fetchGenres();

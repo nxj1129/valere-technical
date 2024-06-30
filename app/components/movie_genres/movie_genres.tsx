@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import MovieCarousel from "../movie_carousel/movie_carousel";
 import FavoriteButton from "../favorite_button/favorite_button";
 import { useRouter } from "next/navigation";
+import { getGenres, getMoviesByGenre } from "@/app/services/tmdb_api";
 
 const MovieGenres: React.FC = () => {
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -12,30 +13,7 @@ const MovieGenres: React.FC = () => {
   const [selectedGenre, setSelectedGenre] = useState<Genre | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const apiKey = process.env.TMDB_API_KEY;
   const router = useRouter();
-
-  async function getGenres() {
-    const res = await fetch(
-      `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`
-    );
-    if (!res.ok) {
-      throw new Error("Failed to fetch movies by genre");
-    }
-    const data = await res.json();
-    return data.genres;
-  }
-
-  async function getMoviesByGenre(genreId: number) {
-    const res = await fetch(
-      `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=${genreId}&page=${1}&sort_by=popularity.desc`
-    );
-    if (!res.ok) {
-      throw new Error("Failed to fetch movies by genre");
-    }
-    const data = await res.json();
-    return data.results;
-  }
 
   const handleGenreClick = (genre: Genre) => {
     setSelectedGenre(genre);

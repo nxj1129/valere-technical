@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import FavoriteButton from "../favorite_button/favorite_button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { getCastMembers, getMovieDetails } from "@/app/services/tmdb_api";
 
 const MovieDetails: React.FC<any> = ({ params }) => {
   const [movie, setMovie] = useState<any>(null);
@@ -13,50 +14,27 @@ const MovieDetails: React.FC<any> = ({ params }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const fromPath = searchParams.get("from") || "/";
-  const apiKey = process.env.TMDB_API_KEY;
   const movieId = params.id;
 
   useEffect(() => {
-    const fetchMovieDetails = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}&language=en-US`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch movie details");
-        }
-        const data = await response.json();
-
-        setMovie(data);
+        const [movieData, castData] = await Promise.all([
+          getMovieDetails(movieId),
+          getCastMembers(movieId),
+        ]);
+        setMovie(movieData);
+        setCast(castData);
       } catch (error) {
-        console.error("Error fetching movie details:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    const fetchCast = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}&language=en-US`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch movie details");
-        }
-        const data = await response.json();
-        setCast(data.cast);
-      } catch (error) {
-        console.error("Error fetching cast:", error);
+        console.error("Error fetching movie data:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
     if (movieId) {
-      fetchMovieDetails();
-      fetchCast();
+      fetchData();
     }
   }, [movieId]);
 

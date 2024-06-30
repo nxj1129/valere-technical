@@ -13,6 +13,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import SearchResults from "../search_results/search_results";
 import { useFavorites } from "@/app/services/favorites_context";
+import { searchMovies } from "@/app/services/tmdb_api";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,22 +23,7 @@ const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const apiKey = process.env.TMDB_API_KEY;
   const { favorites } = useFavorites();
-
-  const searchMovies = async (query: string): Promise<Movie[]> => {
-    if (!query) return [];
-    const res = await fetch(
-      `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(
-        query
-      )}`
-    );
-    if (!res.ok) {
-      throw new Error("Failed to fetch search results");
-    }
-    const data = await res.json();
-    return data.results;
-  };
 
   const debouncedSearch = useCallback(
     debounce((query: string) => {
@@ -90,8 +76,12 @@ const Navbar: React.FC = () => {
     <nav className="bg-gray-800 p-4">
       <div className="container mx-auto flex flex-col md:flex-row md:items-center md:justify-between">
         <div className="flex items-center justify-between">
-          <div className="text-white flex flex-row items-center">
-            <p className="mx-3 text-2xl">Valereflix</p>
+          <div className="text-white flex flex-row items-center cursor-pointer">
+            <p
+              className="mx-3 text-2xl"
+              onClick={() => handleNavigation("/")}>
+              Valereflix
+            </p>
             <Clapperboard
               className="text-red-500"
               size={24}

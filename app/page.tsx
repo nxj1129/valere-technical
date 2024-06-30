@@ -8,25 +8,20 @@ import MovieGenres from "./components/movie_genres/movie_genres";
 import FavoriteButton from "./components/favorite_button/favorite_button";
 import { FavoritesProvider } from "@/app/services/favorites_context";
 import { usePathname, useRouter } from "next/navigation";
+import { getNowPlaying } from "./services/tmdb_api";
 
 export default function Home() {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const apiKey = process.env.TMDB_API_KEY;
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    getMovies().then((data) => setMovies(data.results));
+    getMovies().then((data) => setMovies(data));
   }, []);
 
   async function getMovies() {
-    const res = await fetch(
-      `https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}`
-    );
-    if (!res.ok) {
-      throw new Error("Failed to fetch movies");
-    }
-    return res.json();
+    const res = await getNowPlaying();
+    return res;
   }
 
   const handleSelectMovie = (movie: Movie) => {

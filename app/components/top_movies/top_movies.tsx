@@ -4,6 +4,10 @@ import { ChevronDown } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import FavoriteButton from "../favorite_button/favorite_button";
 import { useRouter } from "next/navigation";
+import {
+  getTopMoviesForProvider,
+  getWatchProviders,
+} from "@/app/services/tmdb_api";
 
 const TopMovies: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,30 +16,7 @@ const TopMovies: React.FC = () => {
   const [selectedProvider, setSelectedProvider] = useState<Provider | null>(
     null
   );
-  const apiKey = process.env.TMDB_API_KEY;
   const router = useRouter();
-
-  async function getWatchProviders() {
-    const res = await fetch(
-      `https://api.themoviedb.org/3/watch/providers/movie?api_key=${apiKey}&language=en-US&watch_region=HR`
-    );
-    if (!res.ok) {
-      throw new Error("Failed to fetch watch providers");
-    }
-    const data = await res.json();
-    return data.results;
-  }
-
-  async function getTopMoviesForProvider(providerId: number) {
-    const res = await fetch(
-      `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&watch_region=HR&with_watch_providers=${providerId}&sort_by=popularity.desc`
-    );
-    if (!res.ok) {
-      throw new Error("Failed to fetch top movies for provider");
-    }
-    const data = await res.json();
-    return data.results.slice(0, 3);
-  }
 
   useEffect(() => {
     getWatchProviders()
