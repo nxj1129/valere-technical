@@ -25,7 +25,6 @@ const MovieCarousel = <T,>({ items, renderItem }: CarouselProps<T>) => {
 
     if (scrollContainer) {
       scrollContainer.addEventListener("scroll", checkScrollPosition);
-      // Check initial scroll position
       checkScrollPosition();
     }
     return () => {

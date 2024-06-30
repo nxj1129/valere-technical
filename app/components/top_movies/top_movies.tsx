@@ -3,6 +3,7 @@
 import { ChevronDown } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import FavoriteButton from "../favorite_button/favorite_button";
+import { useRouter } from "next/navigation";
 
 const TopMovies: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,8 +13,8 @@ const TopMovies: React.FC = () => {
     null
   );
   const apiKey = process.env.TMDB_API_KEY;
+  const router = useRouter();
 
-  // Function to get watch providers
   async function getWatchProviders() {
     const res = await fetch(
       `https://api.themoviedb.org/3/watch/providers/movie?api_key=${apiKey}&language=en-US&watch_region=HR`
@@ -25,31 +26,6 @@ const TopMovies: React.FC = () => {
     return data.results;
   }
 
-  // Function to get popular movies
-  async function getPopularMovies() {
-    const res = await fetch(
-      `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=1`
-    );
-    if (!res.ok) {
-      throw new Error("Failed to fetch popular movies");
-    }
-    const data = await res.json();
-    return data.results;
-  }
-
-  // Function to get watch providers for a specific movie
-  async function getMovieWatchProviders(movieId: any) {
-    const res = await fetch(
-      `https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=${apiKey}`
-    );
-    if (!res.ok) {
-      throw new Error("Failed to fetch movie watch providers");
-    }
-    const data = await res.json();
-    return data.results;
-  }
-
-  // Function to get popular movies from a specific provider
   async function getTopMoviesForProvider(providerId: number) {
     const res = await fetch(
       `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&watch_region=HR&with_watch_providers=${providerId}&sort_by=popularity.desc`
@@ -58,7 +34,7 @@ const TopMovies: React.FC = () => {
       throw new Error("Failed to fetch top movies for provider");
     }
     const data = await res.json();
-    return data.results.slice(0, 3); // Get top 3 movies
+    return data.results.slice(0, 3);
   }
 
   useEffect(() => {
@@ -66,7 +42,6 @@ const TopMovies: React.FC = () => {
       .then((data) => {
         setProviders(data || []);
 
-        // Find Netflix provider
         const netflixProvider = data.find(
           (provider: Provider) => provider.provider_name === "Netflix"
         );
@@ -96,6 +71,10 @@ const TopMovies: React.FC = () => {
         console.error("Error fetching top movies for provider:", error);
       });
     setIsOpen(false);
+  };
+
+  const handleSelectMovie = (movie: Movie) => {
+    router.push(`/pages/${movie.id}/movie-details`);
   };
 
   return (
@@ -140,6 +119,7 @@ const TopMovies: React.FC = () => {
                       src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                       alt={movie.title}
                       className="w-full h-auto object-cover"
+                      onClick={() => handleSelectMovie(movie)}
                     />
                   </div>
                   <div className="absolute top-2 right-2">

@@ -2,11 +2,17 @@
 
 import { useState, useEffect } from "react";
 import FavoriteButton from "../favorite_button/favorite_button";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 
 const MovieDetails: React.FC<any> = ({ params }) => {
   const [movie, setMovie] = useState<any>(null);
   const [cast, setCast] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const fromPath = searchParams.get("from") || "/";
   const apiKey = process.env.TMDB_API_KEY;
   const movieId = params.id;
 
@@ -40,7 +46,6 @@ const MovieDetails: React.FC<any> = ({ params }) => {
           throw new Error("Failed to fetch movie details");
         }
         const data = await response.json();
-        console.log(data);
         setCast(data.cast);
       } catch (error) {
         console.error("Error fetching cast:", error);
@@ -63,6 +68,10 @@ const MovieDetails: React.FC<any> = ({ params }) => {
     return `${day}.${month}.${year}`;
   };
 
+  const handleBack = () => {
+    router.push(fromPath);
+  };
+
   if (isLoading) {
     return <div className="container mx-auto px-4 py-8">Loading...</div>;
   }
@@ -73,6 +82,13 @@ const MovieDetails: React.FC<any> = ({ params }) => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <button
+        onClick={handleBack}
+        className="mb-4 px-4 py-2 text-white hover:text-red-500 flex-row">
+        <p className="flex items-center">
+          <ArrowLeft size={18} /> Back
+        </p>
+      </button>
       <img
         className="w-full rounded-lg opacity-70"
         src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}

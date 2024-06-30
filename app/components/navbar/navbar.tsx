@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import {
   Search,
   Heart,
@@ -61,9 +60,15 @@ const Navbar: React.FC = () => {
   };
 
   const handleSelectMovie = (movie: Movie) => {
-    router.push(`/pages/${movie.id}/movie-details`);
+    router.push(
+      `/pages/${movie.id}/movie-details?from=${encodeURIComponent(pathname)}`
+    );
     setShowResults(false);
     setSearchQuery("");
+  };
+
+  const handleNavigation = (path: string) => {
+    router.push(path);
   };
 
   // Debounce function
@@ -104,8 +109,8 @@ const Navbar: React.FC = () => {
             mobileMenuOpen ? "flex" : "hidden"
           } md:flex flex-col md:flex-row md:items-center mt-4 md:mt-0 space-y-4 md:space-y-0 md:space-x-4`}>
           <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
-            <Link
-              href="/"
+            <button
+              onClick={() => handleNavigation("/")}
               className={`hover:text-red-500 ${
                 pathname === "/" ? "text-red-500 font-bold" : "text-white"
               }`}>
@@ -113,12 +118,12 @@ const Navbar: React.FC = () => {
                 <Home
                   size={18}
                   className="mr-1"
-                />{" "}
+                />
                 Home
               </p>
-            </Link>
-            <Link
-              href="/pages/most-watched"
+            </button>
+            <button
+              onClick={() => handleNavigation("/pages/most-watched")}
               className={`hover:text-red-500 ${
                 pathname === "/pages/most-watched"
                   ? "text-red-500 font-bold"
@@ -128,10 +133,10 @@ const Navbar: React.FC = () => {
                 <TvMinimalPlay
                   size={18}
                   className="mr-1"
-                />{" "}
+                />
                 Most Watched
               </p>
-            </Link>
+            </button>
           </div>
           <div className="relative w-full md:w-auto">
             <button
@@ -150,20 +155,18 @@ const Navbar: React.FC = () => {
             {isOpen && (
               <div className="absolute left-0 md:left-auto right-0 mt-2 w-full md:w-56 bg-gray-700 rounded-md py-1 z-50 max-h-60 overflow-y-auto scrollbar-hide hide-scrollbar cursor-pointer">
                 {favorites?.map((favorite) => (
-                  <Link
-                    href={`/pages/${favorite.id}/movie-details`}
-                    key={favorite.id}>
-                    <div className="flex items-center p-1 hover:bg-gray-600">
-                      <img
-                        src={`https://image.tmdb.org/t/p/w200${favorite.poster_path}`}
-                        alt={favorite.title}
-                        className="w-14 h-20 object-cover rounded md flex-shrink-0"
-                      />
-                      <p className="ml-2 text-white text-xs flex-grow">
-                        {favorite.title}{" "}
-                      </p>
-                    </div>
-                  </Link>
+                  <div
+                    className="flex items-center p-1 hover:bg-gray-600"
+                    onClick={() => handleSelectMovie(favorite)}>
+                    <img
+                      src={`https://image.tmdb.org/t/p/w200${favorite.poster_path}`}
+                      alt={favorite.title}
+                      className="w-14 h-20 object-cover rounded md flex-shrink-0"
+                    />
+                    <p className="ml-2 text-white text-xs flex-grow">
+                      {favorite.title}{" "}
+                    </p>
+                  </div>
                 ))}
               </div>
             )}

@@ -7,10 +7,13 @@ import MovieCarousel from "./components/movie_carousel/movie_carousel";
 import MovieGenres from "./components/movie_genres/movie_genres";
 import FavoriteButton from "./components/favorite_button/favorite_button";
 import { FavoritesProvider } from "@/app/services/favorites_context";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Home() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const apiKey = process.env.TMDB_API_KEY;
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     getMovies().then((data) => setMovies(data.results));
@@ -26,6 +29,12 @@ export default function Home() {
     return res.json();
   }
 
+  const handleSelectMovie = (movie: Movie) => {
+    router.push(
+      `/pages/${movie.id}/movie-details?from=${encodeURIComponent(pathname)}`
+    );
+  };
+
   return (
     <FavoritesProvider>
       <div className="bg-black-100 min-h-screen">
@@ -40,6 +49,7 @@ export default function Home() {
                   src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
                   alt={movie.title}
                   className="w-full h-72 object-cover rounded-lg"
+                  onClick={() => handleSelectMovie(movie)}
                 />
                 <div className="absolute top-2 right-2">
                   <FavoriteButton movie={movie} />

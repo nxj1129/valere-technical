@@ -4,6 +4,7 @@ import { ChevronDown } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import MovieCarousel from "../movie_carousel/movie_carousel";
 import FavoriteButton from "../favorite_button/favorite_button";
+import { useRouter } from "next/navigation";
 
 const MovieGenres: React.FC = () => {
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -12,6 +13,7 @@ const MovieGenres: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const apiKey = process.env.TMDB_API_KEY;
+  const router = useRouter();
 
   async function getGenres() {
     const res = await fetch(
@@ -21,7 +23,6 @@ const MovieGenres: React.FC = () => {
       throw new Error("Failed to fetch movies by genre");
     }
     const data = await res.json();
-    console.log("genres", data);
     return data.genres;
   }
 
@@ -33,7 +34,6 @@ const MovieGenres: React.FC = () => {
       throw new Error("Failed to fetch movies by genre");
     }
     const data = await res.json();
-    console.log(data);
     return data.results;
   }
 
@@ -46,7 +46,7 @@ const MovieGenres: React.FC = () => {
       .catch((error) => {
         console.error("Error fetching top movies for provider:", error);
       });
-    setIsOpen(false); // Close the dropdown
+    setIsOpen(false);
   };
 
   useEffect(() => {
@@ -54,7 +54,6 @@ const MovieGenres: React.FC = () => {
       .then((data) => {
         setGenres(data || []);
 
-        // Find Action genre
         const actionGenre = data.find(
           (genre: Genre) => genre.name === "Action"
         );
@@ -73,6 +72,10 @@ const MovieGenres: React.FC = () => {
         console.error("Error fetching watch providers:", error);
       });
   }, []);
+
+  const handleSelectMovie = (movie: Movie) => {
+    router.push(`/pages/${movie.id}/movie-details`);
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -113,6 +116,7 @@ const MovieGenres: React.FC = () => {
                   src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
                   alt={movie.title}
                   className="w-full h-72 object-cover rounded-lg"
+                  onClick={() => handleSelectMovie(movie)}
                 />
                 <div className="absolute top-2 right-2">
                   <FavoriteButton movie={movie} />

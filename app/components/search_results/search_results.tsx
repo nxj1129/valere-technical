@@ -31,7 +31,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         if (selectedIndex >= 0) {
           onSelect(results[selectedIndex]);
         } else {
-          router.push("/search");
+          router.push("/");
         }
       } else if (e.key === "Escape") {
         onClose();
