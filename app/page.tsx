@@ -17,13 +17,8 @@ export default function Home() {
   const pathname = usePathname();
 
   useEffect(() => {
-    getMovies().then((data) => setMovies(data));
+    getNowPlaying().then((data) => setMovies(data));
   }, []);
-
-  async function getMovies() {
-    const res = await getNowPlaying();
-    return res;
-  }
 
   const handleSelectMovie = (movie: Movie) => {
     router.push(
